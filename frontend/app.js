@@ -16,6 +16,10 @@ const state = {
   playerId: null,
   room: null,
   isHost: false,
+  question: null,
+  timer: null,
+  timeLeft: 0,
+  answered: false,
 };
 
 // ---------- WS ----------
@@ -91,6 +95,32 @@ function connectWS() {
       setText("join-error", msg.payload?.message || "Erro");
       return;
     }
+        if (msg.type === "question") {
+      state.question = msg.payload;
+      state.answered = false;
+      renderQuestion(msg.payload);
+      return;
+    }
+
+    if (msg.type === "answer_result") {
+      const correct = msg.payload.correct;
+      const gained = msg.payload.gained;
+      const correctIndex = msg.payload.correctIndex;
+      setText("answer-feedback", correct ? `Correto! +${gained} pontos.` : `Errado. Resposta correta: ${String.fromCharCode(65 + correctIndex)}.`);
+      lockOptions();
+      return;
+    }
+
+    if (msg.type === "scoreboard") {
+      renderScoreboard(msg.payload.players || []);
+      return;
+    }
+
+    if (msg.type === "round_ended") {
+      // apenas informativo no MVP
+      return;
+    }
+
   };
 }
 
@@ -186,6 +216,61 @@ qs("btn-restart").addEventListener("click", () => {
   resetRoom();
   showScreen("screen-home");
 });
+function renderQuestion(q) {
+  setText("game-meta", `Responda antes do tempo acabar.`);
+  setText("q-difficulty", q.difficulty);
+  setText("answer-feedback", "");
+  buildOptions(q.options);
+
+  // timer
+  state.timeLeft = q.duration;
+  setText("q-timer", String(state.timeLeft));
+  if (state.timer) clearInterval(state.timer);
+  state.timer = setInterval(() => {
+    state.timeLeft -= 1;
+    setText("q-timer", String(Math.max(0, state.timeLeft)));
+    if (state.timeLeft <= 0) {
+      clearInterval(state.timer);
+      lockOptions();
+      setText("answer-feedback", state.answered ? qs("answer-feedback").textContent : "Tempo esgotado.");
+    }
+  }, 1000);
+
+  setText("q-text", q.question);
+}
+
+function buildOptions(options) {
+  const container = qs("q-options");
+  container.innerHTML = "";
+  options.forEach((text, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    btn.textContent = `${String.fromCharCode(65 + idx)}) ${text}`;
+    btn.onclick = () => {
+      if (state.answered) return;
+      state.answered = true;
+      send("answer", { optionIndex: idx });
+      lockOptions();
+    };
+    container.appendChild(btn);
+  });
+}
+
+function lockOptions() {
+  const container = qs("q-options");
+  container.querySelectorAll("button").forEach(b => b.disabled = true);
+}
+
+function renderScoreboard(players) {
+  const ul = qs("score-list");
+  ul.innerHTML = "";
+  players.forEach(p => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${escapeHtml(p.name)} ${p.isHost ? "<em>(Host)</em>" : ""}</span><span>${p.score}</span>`;
+    ul.appendChild(li);
+  });
+}
+
 
 // Conectar já na abertura do lobby se usuário for direto
 connectWS();

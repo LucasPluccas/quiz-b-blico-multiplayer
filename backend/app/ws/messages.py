@@ -10,6 +10,7 @@ class WSIn(BaseModel):
         "join_room",
         "leave_room",
         "start_game",
+        "answer",
         "ping",
     ]
     payload: dict[str, Any] = Field(default_factory=dict)
@@ -21,6 +22,10 @@ class WSOut(BaseModel):
         "room_joined",
         "room_state",
         "game_started",
+        "question",
+        "answer_result",
+        "scoreboard",
+        "round_ended",
         "error",
         "pong",
     ]

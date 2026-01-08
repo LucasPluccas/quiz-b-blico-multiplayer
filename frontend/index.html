@@ -69,16 +69,31 @@
 
     <!-- TELA 3: JOGO (placeholder) -->
     <section id="screen-game" class="screen">
-      <header class="topbar">
-        <h2>Jogo</h2>
-        <div class="muted">MVP: tela placeholder</div>
-      </header>
+  <header class="topbar">
+    <h2>Jogo</h2>
+    <div class="muted" id="game-meta">Aguardando pergunta...</div>
+  </header>
 
-      <div class="card">
-        <p><strong>A partida começou.</strong> Próximo passo: perguntas, tempo por nível e ajudas.</p>
-        <button id="btn-go-finish" class="btn">Simular fim</button>
-      </div>
-    </section>
+  <div class="card">
+    <div class="row">
+      <div><strong>Dificuldade:</strong> <span id="q-difficulty">—</span></div>
+      <div><strong>Tempo:</strong> <span id="q-timer">—</span>s</div>
+    </div>
+
+    <h3 id="q-text" style="margin-top:14px;">—</h3>
+
+    <div class="options" id="q-options"></div>
+
+    <div class="hint" id="answer-feedback"></div>
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <h3>Placar</h3>
+    <ul id="score-list" class="players"></ul>
+    <button id="btn-go-finish" class="btn">Ir para o final</button>
+  </div>
+</section>
+
 
     <!-- TELA 4: FINAL (placeholder) -->
     <section id="screen-finish" class="screen">

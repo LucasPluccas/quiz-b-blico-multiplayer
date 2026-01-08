@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import uuid
+from pathlib import Path
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from backend.app.ws.manager import RoomManager
 from backend.app.ws.messages import WSIn, WSOut, err
@@ -22,6 +25,19 @@ app.add_middleware(
 
 manager = RoomManager()
 
+# ---------- Servir Frontend ----------
+ROOT_DIR = Path(__file__).resolve().parents[2]   # .../backend/app/main.py -> raiz do repo
+FRONTEND_DIR = ROOT_DIR / "frontend"
+
+# arquivos estáticos: css/js
+app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+
+
+@app.get("/")
+def home():
+    # entrega a tela inicial
+    return FileResponse(FRONTEND_DIR / "index.html")
+
 
 @app.get("/health")
 def health():
@@ -32,11 +48,9 @@ def health():
 async def ws_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
 
-    # player_id fica associado ao socket; o front manda ou geramos
     player_id: str | None = None
 
     try:
-        # handshake simples: client pode mandar ?playerId=...
         query_player_id = websocket.query_params.get("playerId")
         player_id = query_player_id or str(uuid.uuid4())
         await manager.register_socket(player_id, websocket)
@@ -121,5 +135,4 @@ async def ws_endpoint(websocket: WebSocket):
     except WebSocketDisconnect:
         await manager.disconnect(player_id)
     except Exception:
-        # em MVP, evitar quebrar o servidor; em produção, log detalhado
         await manager.disconnect(player_id)

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quiz Bíblico Multiplayer</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="app">
+
+    <!-- TELA 1: INÍCIO -->
+    <section id="screen-home" class="screen active">
+      <div class="hero">
+        <div class="hero-overlay">
+          <h1>Quiz Bíblico Multiplayer</h1>
+          <p>
+            Reúna até 4 jogadores e teste seus conhecimentos.
+            Dificuldades: fácil, intermediário, difícil e apocalíptico.
+            Use ajudas estratégicas durante a partida.
+          </p>
+          <button id="btn-go-lobby" class="btn primary">JOGAR</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TELA 2: LOBBY -->
+    <section id="screen-lobby" class="screen">
+      <header class="topbar">
+        <h2>Lobby</h2>
+        <div class="muted" id="ws-status">Desconectado</div>
+      </header>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Criar sala (Host)</h3>
+          <label>Seu nome</label>
+          <input id="host-name" placeholder="Ex: Lucas" maxlength="18" />
+          <button id="btn-create-room" class="btn primary">Criar sala</button>
+          <div class="hint" id="created-pin"></div>
+        </div>
+
+        <div class="card">
+          <h3>Entrar em sala</h3>
+          <label>Seu nome</label>
+          <input id="player-name" placeholder="Ex: Ana" maxlength="18" />
+          <label>PIN</label>
+          <input id="room-pin" placeholder="Ex: 123456" inputmode="numeric" maxlength="6" />
+          <button id="btn-join-room" class="btn">Entrar</button>
+          <div class="hint error" id="join-error"></div>
+        </div>
+
+        <div class="card">
+          <h3>Sala</h3>
+          <div class="row">
+            <div><strong>PIN:</strong> <span id="current-pin">—</span></div>
+            <div><strong>Jogadores:</strong> <span id="current-count">0</span>/4</div>
+          </div>
+          <ul id="players-list" class="players"></ul>
+
+          <div class="row actions">
+            <button id="btn-start-game" class="btn primary" disabled>Iniciar (Host)</button>
+            <button id="btn-leave-room" class="btn danger" disabled>Sair</button>
+          </div>
+          <div class="hint" id="host-info"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TELA 3: JOGO (placeholder) -->
+    <section id="screen-game" class="screen">
+      <header class="topbar">
+        <h2>Jogo</h2>
+        <div class="muted">MVP: tela placeholder</div>
+      </header>
+
+      <div class="card">
+        <p><strong>A partida começou.</strong> Próximo passo: perguntas, tempo por nível e ajudas.</p>
+        <button id="btn-go-finish" class="btn">Simular fim</button>
+      </div>
+    </section>
+
+    <!-- TELA 4: FINAL (placeholder) -->
+    <section id="screen-finish" class="screen">
+      <header class="topbar">
+        <h2>Final</h2>
+        <div class="muted">MVP: tela placeholder</div>
+      </header>
+
+      <div class="card">
+        <p>Placar e “Jogar novamente” virão na próxima etapa.</p>
+        <button id="btn-restart" class="btn primary">Voltar ao início</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

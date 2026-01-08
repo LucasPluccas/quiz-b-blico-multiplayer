@@ -1,0 +1,13 @@
+{
+  "name": "Quiz Biblico Multiplayer",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "postCreateCommand": "python -m venv .venv && . .venv/bin/activate && pip install -r backend/requirements.txt || true",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  }
+}
